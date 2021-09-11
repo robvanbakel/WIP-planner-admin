@@ -15,7 +15,9 @@ app.get("/feed/:id", async (req, res) => {
 
     const week = doc.data();
 
-    schedules[doc.id] = week[uid]
+    if(week[uid]) {
+      schedules[doc.id] = week[uid]
+    }
 
   })
 
