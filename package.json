@@ -1,0 +1,26 @@
+{
+  "name": "planner-feed",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/robvanbakel/WIP-planner-feed.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/robvanbakel/WIP-planner-feed/issues"
+  },
+  "homepage": "https://github.com/robvanbakel/WIP-planner-feed#readme",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "firebase-admin": "^9.11.1"
+  }
+}
