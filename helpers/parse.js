@@ -1,9 +1,11 @@
+const { v4: uuidv4 } = require('uuid');
+
 const getDatesFromWeekId = require("./getDatesFromWeekId")
 
 const parse = (schedules) => {
   
   // Open string that will be served as a calendar stream (.ics)
-  let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0"
+  let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Rob van Bakel//Planner//EN"
 
   for (const weekId in schedules) {
 
@@ -21,6 +23,12 @@ const parse = (schedules) => {
 
         // Open event in .ics content
         icsContent = icsContent.concat("\nBEGIN:VEVENT")
+
+        // Add UID to event in .ics content
+        icsContent = icsContent.concat(`\nUID:${uuidv4()}`)
+
+        // Add timestamp to event in .ics content
+        icsContent = icsContent.concat(`\nDTSTAMP:${new Date().toISOString().replace(/[-:]/g,'').split('.')[0]}`)
 
         // Add date and time string to .ics content
         icsContent = icsContent.concat(`\nDTSTART:${year}${month}${date}T${shift.start}00\nDTEND:${year}${month}${date}T${shift.end}00`)
