@@ -23,6 +23,8 @@ app.get("/feed/:id", async (req, res) => {
 
   const icsContent = parse(schedules)
 
+  res.set('Content-Type', 'text/calendar');
+
   res.send(icsContent)
 
   console.log(`Served feed to ${uid} at ${new Date().toLocaleString()}`)
