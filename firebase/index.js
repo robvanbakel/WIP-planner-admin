@@ -18,6 +18,7 @@ admin.initializeApp({
   databaseURL: "https://scheduler-cb321-default-rtdb.firebaseio.com",
 })
 
+const auth = admin.auth()
 const db = admin.firestore()
 
-module.exports = { db }
+module.exports = { auth, db }
