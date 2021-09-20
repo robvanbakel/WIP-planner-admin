@@ -1,6 +1,6 @@
 # [WIP] Planner Admin
 
-The [WIP] Planner Admin is responsible for the higher-level functions of the [[WIP] Planner](https://github.com/robvanbakel/wip-planner), that cannot be executed by the app on the frontend. At this moment, the Admin serves three purposes:
+The [WIP] Planner Admin is responsible for the higher-level functions of the [[WIP] Planner](https://github.com/robvanbakel/wip-planner), that cannot be executed by the app on the frontend. At this moment, the Admin serves these purposes:
 
 ## Routes
 
@@ -8,6 +8,7 @@ The [WIP] Planner Admin is responsible for the higher-level functions of the [[W
 | :--------------- | :----- | :------------ | :----------------------------------------------------------- |
 | `/createNewUser` | POST   | email address | Creates a new user in Firebase and returns the uid           |
 | `/feed`          | GET    | uid           | Finds all shifts for the provided user and returns iCal feed |
+| `/getSchedules`  | GET    | uid           | Gets all schedules for one employee                          |
 
 ## Functions
 
