@@ -69,6 +69,7 @@ app.get("/getSchedules/:id", async (req, res) => {
             break: day.break,
             end: day.end,
             place: day.place,
+            notes: day.notes,
           }
         }
       })
