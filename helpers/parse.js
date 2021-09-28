@@ -2,7 +2,7 @@ const { v4: uuidv4 } = require("uuid")
 
 const getDatesFromWeekId = require("./getDatesFromWeekId")
 
-const parse = (schedules) => {
+const parse = (schedules, {shareNotes}) => {
   // Open string that will be served as a calendar stream (.ics)
   let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Rob van Bakel//Planner//EN"
 
@@ -36,7 +36,7 @@ const parse = (schedules) => {
         icsContent = icsContent.concat(`\nLOCATION:Stationsplein\\, 5611 AD Eindhoven`)
 
         // If note is present, add notes to .ics content
-        if (shift.notes) {
+        if (shift.notes && shareNotes) {
           icsContent = icsContent.concat(`\nDESCRIPTION:${shift.notes}`)
         }
 

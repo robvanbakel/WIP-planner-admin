@@ -30,6 +30,9 @@ app.post("/createNewUser", async (req, res) => {
 })
 
 app.get("/feed/:id", async (req, res) => {
+  const settings = await db.collection("settings").doc("shareWithEmployees").get()
+  const shareWithEmployees = settings.data()
+
   const uid = req.params.id
 
   let schedules = {}
@@ -43,7 +46,7 @@ app.get("/feed/:id", async (req, res) => {
     }
   })
 
-  const icsContent = parse(schedules)
+  const icsContent = parse(schedules, { shareNotes: shareWithEmployees.shiftNotes })
 
   res.set("Content-Type", "text/calendar")
 
@@ -53,6 +56,9 @@ app.get("/feed/:id", async (req, res) => {
 })
 
 app.get("/getSchedules/:id", async (req, res) => {
+  const settings = await db.collection("settings").doc("shareWithEmployees").get()
+  const shareWithEmployees = settings.data()
+
   const uid = req.params.id
 
   let schedules = {}
@@ -64,13 +70,18 @@ app.get("/getSchedules/:id", async (req, res) => {
     if (week[uid]) {
       schedules[doc.id] = week[uid].map((day) => {
         if (day) {
-          return {
+          let shiftInfo = {
             start: day.start,
             break: day.break,
             end: day.end,
             place: day.place,
-            notes: day.notes,
           }
+
+          if (shareWithEmployees.shiftNotes) {
+            shiftInfo["notes"] = day.notes
+          }
+
+          return shiftInfo
         }
       })
     }
