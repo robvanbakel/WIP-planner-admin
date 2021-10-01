@@ -90,4 +90,33 @@ app.get("/getSchedules/:id", async (req, res) => {
   res.send(schedules)
 })
 
+app.get("/getUser/:id", async (req, res) => {
+
+  const settings = await db.collection("settings").doc("shareWithEmployees").get()
+  const shareWithEmployees = settings.data()
+
+  const uid = req.params.id
+
+  const doc = await db.collection("users").doc(uid).get()
+  const data = doc.data()
+
+  let user = {
+    id: doc.id,
+    status: data.status,
+    contract: data.contract,
+    firstName: data.firstName,
+    lastName: data.lastName,
+    role: data.role,
+    contractType: data.contractType,
+    email: data.email,
+    phone: data.phone,
+  }
+
+  if (shareWithEmployees.employeeNotes) {
+    user["notes"] = data.notes
+  }
+
+  res.send(user)
+})
+
 app.listen(process.env.PORT, () => console.log(`Server running on port ${process.env.PORT}`))
