@@ -8,7 +8,8 @@ The [WIP] Planner Admin is responsible for the higher-level functions of the [[W
 | :--------------- | :----- | :------------ | :----------------------------------------------------------- |
 | `/createNewUser` | POST   | email address | Creates a new user in Firebase and returns the uid           |
 | `/feed`          | GET    | uid           | Finds all shifts for the provided user and returns iCal feed |
-| `/getSchedules`  | GET    | uid           | Gets all schedules for one employee                          |
+| `/getSchedules`  | GET    | uid           | Gets all schedules for a single employee                     |
+| `/getUser`       | GET    | uid           | Gets user data for a single employee                         |
 
 ## Functions
 
