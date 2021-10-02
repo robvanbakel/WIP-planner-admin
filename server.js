@@ -11,10 +11,13 @@ app.use(express.json())
 const { db, auth } = require("./firebase")
 const parse = require("./helpers/parse")
 const shiftDatabase = require("./helpers/shiftDatabase")
+const getSettings = require("./helpers/getSettings")
 
 // Every monday at midnight, move database
 // with demo content to current week
 cron.schedule("0 0 * * 1", () => shiftDatabase())
+
+let shareWithEmployees = null
 
 app.post("/createNewUser", async (req, res) => {
   try {
@@ -30,8 +33,7 @@ app.post("/createNewUser", async (req, res) => {
 })
 
 app.get("/feed/:id", async (req, res) => {
-  const settings = await db.collection("settings").doc("shareWithEmployees").get()
-  const shareWithEmployees = settings.data()
+  shareWithEmployees = await getSettings()
 
   const uid = req.params.id
 
@@ -56,8 +58,7 @@ app.get("/feed/:id", async (req, res) => {
 })
 
 app.get("/getSchedules/:id", async (req, res) => {
-  const settings = await db.collection("settings").doc("shareWithEmployees").get()
-  const shareWithEmployees = settings.data()
+  shareWithEmployees = await getSettings()
 
   const uid = req.params.id
 
@@ -91,9 +92,7 @@ app.get("/getSchedules/:id", async (req, res) => {
 })
 
 app.get("/getUser/:id", async (req, res) => {
-
-  const settings = await db.collection("settings").doc("shareWithEmployees").get()
-  const shareWithEmployees = settings.data()
+  shareWithEmployees = await getSettings()
 
   const uid = req.params.id
 
