@@ -13,9 +13,10 @@ The [WIP] Planner Admin is responsible for the higher-level functions of the [[W
 
 ## Functions
 
-| Function          | Description                                               |
-| :---------------- | :-------------------------------------------------------- |
-| `shiftDatabase()` | Shift all demo content by a week every Monday at midnight |
+| Function          | Description                                                         |
+| :---------------- | :------------------------------------------------------------------ |
+| `shiftDatabase()` | Shift all demo content by a week every Monday at midnight           |
+| `getSettings()`   | Serve settings form database, store settings in memory for one hour |
 
 #### Built With
 
