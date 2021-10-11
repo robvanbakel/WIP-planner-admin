@@ -1,5 +1,4 @@
 require("dotenv").config()
-const { v4: uuidv4 } = require("uuid")
 const express = require("express")
 const cors = require("cors")
 const cron = require("node-cron")
@@ -11,6 +10,7 @@ app.use(express.json())
 const { db, auth } = require("./firebase")
 const parse = require("./helpers/parse")
 const shiftDatabase = require("./helpers/shiftDatabase")
+const generateRandomString = require("./helpers/generateRandomString")
 
 // Every monday at midnight, move database
 // with demo content to current week
@@ -39,10 +39,18 @@ app.post("/createNewUser", async (req, res) => {
   try {
     const { uid } = await auth.createUser({
       email: req.body.email,
-      password: uuidv4(),
+      password: generateRandomString(16),
     })
 
     res.send({ uid })
+
+    const activationToken = generateRandomString(32)
+
+    db.collection("activationTokens").doc(activationToken).set({
+      uid,
+      iat: Date.now(),
+    })
+    
   } catch (err) {
     res.send(err)
   }
