@@ -11,6 +11,7 @@ const { db, auth } = require("./firebase")
 const parse = require("./helpers/parse")
 const shiftDatabase = require("./helpers/shiftDatabase")
 const generateRandomString = require("./helpers/generateRandomString")
+const confirmEmail = require("./helpers/confirmEmail")
 
 // Every monday at midnight, move database
 // with demo content to current week
@@ -50,9 +51,25 @@ app.post("/createNewUser", async (req, res) => {
       uid,
       iat: Date.now(),
     })
-    
   } catch (err) {
     res.send(err)
+  }
+})
+
+app.get("/activateAccount", async (req, res) => {
+  const emailConfirmed = await confirmEmail(req.query.activationToken, req.query.email)
+  res.status(emailConfirmed.status).send(emailConfirmed.body)
+})
+
+app.post("/activateAccount", async (req, res) => {
+  try {
+    const { uid } = await confirmEmail(req.body.activationToken, req.body.email)
+
+    await auth.updateUser(uid, { password: req.body.password })
+
+    res.end()
+  } catch (err) {
+    res.status(404).send({ error: "Invalid request" })
   }
 })
 
