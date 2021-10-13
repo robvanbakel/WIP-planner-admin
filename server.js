@@ -63,11 +63,23 @@ app.get("/activateAccount", async (req, res) => {
 
 app.post("/activateAccount", async (req, res) => {
   try {
+    // Get UID from activation token and email
     const { uid } = await confirmEmail(req.body.activationToken, req.body.email)
 
+    // Update password
     await auth.updateUser(uid, { password: req.body.password })
 
     res.end()
+
+    // If user's status is still 'staged', set to 'active'
+    const doc = await db.collection("users").doc(uid).get()
+    const userData = doc.data()
+
+    if (userData.status === "staged") {
+      db.collection("users").doc(uid).update({
+        status: "active",
+      })
+    }
   } catch (err) {
     res.status(404).send({ error: "Invalid request" })
   }
