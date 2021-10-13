@@ -4,12 +4,14 @@ The [WIP] Planner Admin is responsible for the higher-level functions of the [[W
 
 ## Routes
 
-| Route            | Method | Parameter     | Description                                                  |
-| :--------------- | :----- | :------------ | :----------------------------------------------------------- |
-| `/createNewUser` | POST   | email address | Creates a new user in Firebase and returns the uid           |
-| `/feed`          | GET    | uid           | Finds all shifts for the provided user and returns iCal feed |
-| `/getSchedules`  | GET    | uid           | Gets all schedules for a single employee                     |
-| `/getUser`       | GET    | uid           | Gets user data for a single employee                         |
+| Route              | Method | Parameter             | Description                                                  |
+| :----------------- | :----- | :-------------------- | :----------------------------------------------------------- |
+| `/createNewUser`   | POST   | email                 | Creates a new user in Firebase and returns the uid           |
+| `/feed`            | GET    | uid                   | Finds all shifts for the provided user and returns iCal feed |
+| `/getSchedules`    | GET    | uid                   | Gets all schedules for a single employee                     |
+| `/getUser`         | GET    | uid                   | Gets user data for a single employee                         |
+| `/activateAccount` | GET    | token, email          | Verifies activation token by email address                   |
+| `/activateAccount` | POST   | toke, email, password | Sets new password for user and sets status to 'active'       |
 
 ## Functions
 
