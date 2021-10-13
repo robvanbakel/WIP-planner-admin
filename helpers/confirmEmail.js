@@ -6,7 +6,15 @@ const confirmEmail = async (activationToken, email) => {
   try {
     // Get UID from activationToken
     const doc = await db.collection("activationTokens").doc(activationToken).get()
-    const { uid } = doc.data()
+    const { uid, iat } = doc.data()
+
+    // Check if token is older than 7 days
+    if (Date.now() > iat + 1000 * 60 * 60 * 24 * 7) {
+      return {
+        status: 403,
+        body: { error: "Activation token expired" },
+      }
+    }
 
     // Get email from user data
     const user = await db.collection("users").doc(uid).get()
@@ -16,7 +24,7 @@ const confirmEmail = async (activationToken, email) => {
       return {
         status: 202,
         body: { firstName },
-        uid
+        uid,
       }
     } else {
       return {
