@@ -74,6 +74,9 @@ app.post("/activateAccount", async (req, res) => {
 
     res.end()
 
+    // Delete activation token
+    db.collection("activationTokens").doc(req.body.activationToken).delete()
+
     // If user's status is still 'staged', set to 'active'
     const doc = await db.collection("users").doc(uid).get()
     const userData = doc.data()
