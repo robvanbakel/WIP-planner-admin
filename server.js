@@ -12,6 +12,7 @@ const parse = require("./helpers/parse")
 const shiftDatabase = require("./helpers/shiftDatabase")
 const generateRandomString = require("./helpers/generateRandomString")
 const confirmEmail = require("./helpers/confirmEmail")
+const sendMail = require("./helpers/sendMail")
 
 // Every monday at midnight, move database
 // with demo content to current week
@@ -38,12 +39,12 @@ app.get("/updateSettings", async (req, res) => {
 
 app.post("/createNewUser", async (req, res) => {
   try {
-    const { uid } = await auth.createUser({
-      email: req.body.email,
-      password: generateRandomString(16),
-    })
+      const { uid } = await auth.createUser({
+        email: req.body.email,
+        password: generateRandomString(16),
+      })
 
-    res.send({ uid })
+      res.send({ uid })
 
     const activationToken = generateRandomString(32)
 
@@ -51,6 +52,8 @@ app.post("/createNewUser", async (req, res) => {
       uid,
       iat: Date.now(),
     })
+
+    sendMail({ activationToken, email: req.body.email, firstName: req.body.firstName })
   } catch (err) {
     res.send(err)
   }
