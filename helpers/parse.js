@@ -4,7 +4,7 @@ const getDatesFromWeekId = require("./getDatesFromWeekId")
 
 const parse = (schedules, {shareNotes}) => {
   // Open string that will be served as a calendar stream (.ics)
-  let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Rob van Bakel//Planner//EN"
+  let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Rob van Bakel//Spark//EN"
 
   for (const weekId in schedules) {
     // Establish dates from weekId

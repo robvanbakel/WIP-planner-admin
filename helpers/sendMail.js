@@ -7,12 +7,12 @@ sgMail.setApiKey(process.env.SENDGRID_KEY)
 
 const sendMail = ({ activationToken, email, firstName }) => {
   
-  const activationLink = `https://planner.robvanbakel.com/auth?activationToken=${activationToken}`
+  const activationLink = `https://demo.sparkscheduler.com/auth?activationToken=${activationToken}`
 
   sgMail.send({
     to: email,
     from: "info@robvanbakel.nl",
-    subject: `Planner: Activate your account`,
+    subject: `Spark: Activate your account`,
     html: activationMailTemplate({activationLink,firstName}),
   })
 }

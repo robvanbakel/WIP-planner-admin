@@ -31,7 +31,7 @@ const activationMailTemplate = ({ activationLink, firstName }) => {
   <p>After activating your account, you'll be able to log in and see your schedule.</p>
   <p>
     Kind regards,<br />
-    The Planner team
+    The Planning team
   </p>
 </div>
 </div>`

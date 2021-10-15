@@ -1,5 +1,5 @@
 {
-  "name": "planner-admin",
+  "name": "spark-admin",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
@@ -9,15 +9,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/robvanbakel/WIP-planner-admin.git"
+    "url": "git+https://github.com/robvanbakel/spark-admin.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/robvanbakel/WIP-planner-admin/issues"
+    "url": "https://github.com/robvanbakel/spark-admin/issues"
   },
-  "homepage": "https://github.com/robvanbakel/WIP-planner-admin#readme",
+  "homepage": "https://github.com/robvanbakel/spark-admin#readme",
   "dependencies": {
     "@sendgrid/mail": "^7.4.7",
     "cors": "^2.8.5",
