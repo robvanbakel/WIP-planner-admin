@@ -3,7 +3,6 @@ const router = express.Router()
 
 const { db, auth } = require("./firebase")
 
-const parse = require("./helpers/parse")
 const generateRandomString = require("./helpers/generateRandomString")
 const confirmEmail = require("./helpers/confirmEmail")
 const sendMail = require("./helpers/sendMail")
@@ -77,29 +76,6 @@ router.post("/activateAccount", async (req, res) => {
   } catch (err) {
     res.status(404).send({ error: "Invalid request" })
   }
-})
-
-router.get("/feed/:id", async (req, res) => {
-  const uid = req.params.id
-
-  let schedules = {}
-
-  const snapshot = await db.collection("schedules").get()
-  snapshot.forEach((doc) => {
-    const week = doc.data()
-
-    if (week[uid]) {
-      schedules[doc.id] = week[uid]
-    }
-  })
-
-  const icsContent = parse(schedules, { shareNotes: shareWithEmployees.shiftNotes })
-
-  res.set("Content-Type", "text/calendar")
-
-  res.send(icsContent)
-
-  console.log(`Served feed to ${uid} at ${new Date().toLocaleString()}`)
 })
 
 router.get("/getSchedules/:id", async (req, res) => {
