@@ -19,6 +19,7 @@ const getSettings = async () => {
 // Get initial settings when starting server
 getSettings()
 
+// Route to update locally saved settings when called
 router.get("/updateSettings", async (req, res) => {
   await getSettings()
   res.end()
@@ -26,6 +27,7 @@ router.get("/updateSettings", async (req, res) => {
 
 router.post("/createNewUser", async (req, res) => {
   try {
+    // Create new user with random password, return uid to frontend
     const { uid } = await auth.createUser({
       email: req.body.email,
       password: generateRandomString(16),
@@ -33,6 +35,7 @@ router.post("/createNewUser", async (req, res) => {
 
     res.send({ uid })
 
+    // Create activation token and store in database
     const activationToken = generateRandomString(32)
 
     db.collection("activationTokens").doc(activationToken).set({
@@ -40,6 +43,7 @@ router.post("/createNewUser", async (req, res) => {
       iat: Date.now(),
     })
 
+    // Send mail with activation token to provided email address
     sendMail({ activationToken, email: req.body.email, firstName: req.body.firstName })
   } catch (err) {
     res.send(err)
@@ -47,6 +51,7 @@ router.post("/createNewUser", async (req, res) => {
 })
 
 router.get("/activateAccount", async (req, res) => {
+  // Check if provided email matches provided activation token
   const emailConfirmed = await confirmEmail(req.query.activationToken, req.query.email)
   res.status(emailConfirmed.status).send(emailConfirmed.body)
 })
@@ -79,14 +84,16 @@ router.post("/activateAccount", async (req, res) => {
 })
 
 router.get("/getSchedules/:id", async (req, res) => {
-  const uid = req.params.id
+  // Declare variables
+  const { id: uid } = req.params
+  const schedules = {}
 
-  let schedules = {}
-
+  // Get schedules from database
   const snapshot = await db.collection("schedules").get()
   snapshot.forEach((doc) => {
     const week = doc.data()
 
+    // If uid is present in current week, map schedule to response object
     if (week[uid]) {
       schedules[doc.id] = week[uid].map((day) => {
         if (day) {
@@ -97,9 +104,8 @@ router.get("/getSchedules/:id", async (req, res) => {
             place: day.place,
           }
 
-          if (shareWithEmployees.shiftNotes) {
-            shiftInfo["notes"] = day.notes
-          }
+          // When enabled by employer, include shift notes
+          shareWithEmployees.shiftNotes && (shiftInfo["notes"] = day.notes)
 
           return shiftInfo
         }
@@ -111,11 +117,14 @@ router.get("/getSchedules/:id", async (req, res) => {
 })
 
 router.get("/getUser/:id", async (req, res) => {
-  const uid = req.params.id
+  // Declare variables
+  const { id: uid } = req.params
 
+  // Get user info from database
   const doc = await db.collection("users").doc(uid).get()
   const data = doc.data()
 
+  // Map user data to response object
   let user = {
     id: doc.id,
     status: data.status,
@@ -128,9 +137,8 @@ router.get("/getUser/:id", async (req, res) => {
     phone: data.phone,
   }
 
-  if (shareWithEmployees.employeeNotes) {
-    user["notes"] = data.notes
-  }
+  // When enabled by employer, include employee notes
+  shareWithEmployees.employeeNotes && (user["notes"] = data.notes)
 
   res.send(user)
 })
