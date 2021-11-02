@@ -69,10 +69,11 @@ router.post("/activateAccount", async (req, res) => {
     // Delete activation token
     db.collection("activationTokens").doc(req.body.activationToken).delete()
 
-    // If user's status is still 'staged', set to 'active'
+    // Get user info from database
     const doc = await db.collection("users").doc(uid).get()
     const userData = doc.data()
 
+    // If user's status has not been changed by employer, update status
     if (userData.status === "staged") {
       db.collection("users").doc(uid).update({
         status: "active",
@@ -84,7 +85,6 @@ router.post("/activateAccount", async (req, res) => {
 })
 
 router.get("/getSchedules/:id", async (req, res) => {
-  // Declare variables
   const { id: uid } = req.params
   const schedules = {}
 
@@ -117,7 +117,6 @@ router.get("/getSchedules/:id", async (req, res) => {
 })
 
 router.get("/getUser/:id", async (req, res) => {
-  // Declare variables
   const { id: uid } = req.params
 
   // Get user info from database

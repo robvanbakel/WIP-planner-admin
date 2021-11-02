@@ -7,7 +7,6 @@ const { db } = require("../firebase")
 const shiftDatabase = async () => {
 
   // Save old version of database
-
   const snapshot = await db.collection("schedules").get()
 
   let oldDatabase = {}
@@ -17,7 +16,6 @@ const shiftDatabase = async () => {
   })
 
   // Function to delete old weekIds
-
   const deleteWeeks = async () => {
     for (const weekId in oldDatabase) {
       await db.collection("schedules").doc(weekId).delete()
@@ -25,7 +23,6 @@ const shiftDatabase = async () => {
   }
 
   // Function to create shifted weekIds
-
   const createWeeks = async () => {
     for (const weekId in oldDatabase) {
       const nextWeekId = getNextWeekId(weekId)
@@ -38,9 +35,7 @@ const shiftDatabase = async () => {
   }
 
   // Call functions
-
   await deleteWeeks()
-
   await createWeeks()
 }
 
