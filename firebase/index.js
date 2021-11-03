@@ -15,7 +15,7 @@ const serviceAccount = {
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://scheduler-cb321-default-rtdb.firebaseio.com",
+  databaseURL: process.env.FIREBASE_database_url,
 })
 
 const auth = admin.auth()
