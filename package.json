@@ -1,7 +1,7 @@
 {
   "name": "spark-admin",
   "version": "1.0.0",
-  "description": "",
+  "description": "Admin environment for higher-level functions for Spark",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
