@@ -8,6 +8,7 @@ app.use(cors())
 app.use(express.json())
 
 const { db } = require('./firebase')
+const dayjs = require('./dayjs')
 
 const parse = require('./helpers/parse')
 const shiftDatabase = require('./helpers/shiftDatabase')
@@ -55,7 +56,7 @@ app.get('/feed/:id', async (req, res) => {
 
   res.send(icsContent)
 
-  console.log(`Served feed to ${uid} at ${new Date().toLocaleString()}`)
+  console.log(`Served feed to ${'uid'} at ${dayjs().format('LLL')}`)
 })
 
 app.listen(process.env.PORT, () => console.log(`Server running on port ${process.env.PORT}`))
