@@ -106,6 +106,7 @@ router.get('/getSchedules/:id', async (req, res) => {
             break: day.break,
             end: day.end,
             place: day.place,
+            accepted: day.accepted
           }
 
           // When enabled by employer, include shift notes
