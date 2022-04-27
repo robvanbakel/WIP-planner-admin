@@ -147,4 +147,34 @@ router.get('/getUser/:id', async (req, res) => {
   res.send(user)
 })
 
+router.get('/accept/:shiftId', async (req, res) => {
+
+  try {
+    
+    // Get ID Token from request headers
+    const idToken = req.headers.authorization
+    const user = await auth.verifyIdToken(idToken);
+
+    // Find corresponding shift
+    const shiftRef = db.collection("shifts").doc(req.params.shiftId)
+    const response = await shiftRef.get()
+    const data = response.data()
+
+    // Update status if request was sent by correct employee
+    if(data.employeeId === user.uid) {
+      shiftRef.update({
+        status: 'ACCEPTED'
+      })
+    }
+  
+    res.end()
+
+  } catch(err) {
+
+    res.status(401).end()
+
+  }
+
+})
+
 module.exports = router
