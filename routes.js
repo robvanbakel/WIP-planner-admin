@@ -1,5 +1,7 @@
 const express = require('express')
 const router = express.Router()
+const dayjs = require('./dayjs')
+const axios = require('axios')
 
 const { db, auth } = require('./firebase')
 
@@ -88,34 +90,50 @@ router.post('/activateAccount', async (req, res) => {
   }
 })
 
-router.get('/getSchedules/:id', async (req, res) => {
-  const { id: uid } = req.params
+router.get('/getSchedules/:employeeId', async (req, res) => {
+
   const schedules = {}
 
-  // Get schedules from database
-  const snapshot = await db.collection('schedules').get()
-  snapshot.forEach((doc) => {
-    const week = doc.data()
+  const getData = async (doc) => {
 
-    // If uid is present in current week, map schedule to response object
-    if (week[uid]) {
-      schedules[doc.id] = week[uid].map((day) => {
-        if (day) {
-          let shiftInfo = {
-            start: day.start,
-            break: day.break,
-            end: day.end,
-            place: day.place,
-            accepted: day.accepted
-          }
+    if (process.env.NODE_ENV === 'development') {
+      const { data } = await axios.get(process.env.DATA + doc)
+      const rawData =  data.map(({ id, data }) => ({ id, data: () => data }))
 
-          // When enabled by employer, include shift notes
-          shareWithEmployees.shiftNotes && (shiftInfo['notes'] = day.notes)
+      const DUMMY_FILTERED = rawData
+        .map(shift => ({ shiftId: shift.id, ...shift.data() }))
+        .filter(shift => shift.employeeId === req.params.employeeId)
+        .map(shift => shift.shiftId)
 
-          return shiftInfo
-        }
-      })
+      return data.filter(shift => DUMMY_FILTERED.includes(shift.id)).map(({ id, data }) => ({ id, data: () => data }))
+
+    } else {
+      const shiftsRef = db.collection('shifts')
+      const query = shiftsRef.where('employeeId', '==', req.params.employeeId)
+      return query.get()
     }
+
+  }
+
+  const snapshot = await getData('shifts')
+  
+  snapshot.forEach((doc) => {
+
+    const data = doc.data()
+  
+    const weekId = dayjs(data.from).weekId()
+  
+    schedules[weekId] = schedules[weekId] || new Array(7).fill(null)
+  
+    schedules[weekId][dayjs(data.from).isoWeekday() - 1] = {
+        shiftId: doc.id,
+        start: dayjs(data.from).format('HHmm'),
+        break: data.break.toString(),
+        end: dayjs(data.to).format('HHmm'),
+        place: data.location,
+        accepted: data.status === 'ACCEPTED',
+        notes: data.notes
+      }
   })
 
   res.send(schedules)
