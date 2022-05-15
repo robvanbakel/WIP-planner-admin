@@ -1,6 +1,6 @@
 module.exports = {
   extends: [
-    'airbnb-base',
+    // 'airbnb-base',
   ],
   parserOptions: {
     ecmaVersion: 'latest',
