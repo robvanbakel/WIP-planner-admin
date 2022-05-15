@@ -1,62 +1,63 @@
-require('dotenv').config()
-const express = require('express')
-const cors = require('cors')
-const cron = require('node-cron')
-const app = express()
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+const cron = require('node-cron');
 
-app.use(cors())
-app.use(express.json())
+const app = express();
 
-const { db } = require('./firebase')
-const dayjs = require('./dayjs')
+app.use(cors());
+app.use(express.json());
 
-const parse = require('./helpers/parse')
-const shiftDatabase = require('./helpers/shiftDatabase')
+const { db } = require('./firebase');
+const dayjs = require('./dayjs');
+
+const parse = require('./helpers/parse');
+const shiftDatabase = require('./helpers/shiftDatabase');
 
 // Empty variable to store settings
-let shareWithEmployees
-let location
+let shareWithEmployees;
+let location;
 
 // Helper function to get settings from database
 const getSettings = async () => {
-  const getShareWithEmployees = await db.collection('settings').doc('shareWithEmployees').get()
-  shareWithEmployees = getShareWithEmployees.data()
+  const getShareWithEmployees = await db.collection('settings').doc('shareWithEmployees').get();
+  shareWithEmployees = getShareWithEmployees.data();
 
-  const getLocation = await db.collection('settings').doc('location').get()
-  location = getLocation.data()
-}
+  const getLocation = await db.collection('settings').doc('location').get();
+  location = getLocation.data();
+};
 
 // Get initial settings when starting server
-getSettings()
+getSettings();
 
 // Every monday at midnight, move database
 // with demo content to current week
-cron.schedule('0 0 * * 1', () => shiftDatabase())
+cron.schedule('0 0 * * 1', () => shiftDatabase());
 
 // Routes
-app.use('/admin', require('./routes'))
+app.use('/admin', require('./routes'));
 
 app.get('/feed/:id', async (req, res) => {
-  const uid = req.params.id
+  const uid = req.params.id;
 
-  let schedules = {}
+  const schedules = {};
 
-  const snapshot = await db.collection('schedules').get()
+  const snapshot = await db.collection('schedules').get();
   snapshot.forEach((doc) => {
-    const week = doc.data()
+    const week = doc.data();
 
     if (week[uid]) {
-      schedules[doc.id] = week[uid]
+      schedules[doc.id] = week[uid];
     }
-  })
+  });
 
-  const icsContent = parse(schedules, { shareNotes: shareWithEmployees.shiftNotes, location })
+  const icsContent = parse(schedules, { shareNotes: shareWithEmployees.shiftNotes, location });
 
-  res.set('Content-Type', 'text/calendar')
+  res.set('Content-Type', 'text/calendar');
 
-  res.send(icsContent)
+  res.send(icsContent);
 
-  console.log(`Served feed to ${'uid'} at ${dayjs().format('LLL')}`)
-})
+  console.log(`Served feed to ${'uid'} at ${dayjs().format('LLL')}`);
+});
 
-app.listen(process.env.PORT, () => console.log(`Server running on port ${process.env.PORT}`))
+app.listen(process.env.PORT, () => console.log(`Server running on port ${process.env.PORT}`));

@@ -1,4 +1,4 @@
-const admin = require("firebase-admin")
+const admin = require('firebase-admin');
 
 const serviceAccount = {
   type: process.env.GOOGLE_type,
@@ -11,14 +11,14 @@ const serviceAccount = {
   token_uri: process.env.GOOGLE_token_uri,
   auth_provider_x509_cert_url: process.env.GOOGLE_auth_provider_x509_cert_url,
   client_x509_cert_url: process.env.GOOGLE_client_x509_cert_url,
-}
+};
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: process.env.FIREBASE_database_url,
-})
+});
 
-const auth = admin.auth()
-const db = admin.firestore()
+const auth = admin.auth();
+const db = admin.firestore();
 
-module.exports = { auth, db }
+module.exports = { auth, db };
