@@ -16,6 +16,7 @@ redis.connect();
 
 const parse = require('./helpers/parse');
 const shiftDatabase = require('./helpers/shiftDatabase');
+const onStart = require('./helpers/onStart');
 
 // Empty variable to store settings
 let shareWithEmployees;
@@ -63,4 +64,4 @@ app.get('/feed/:id', async (req, res) => {
   console.log(`Served feed to ${'uid'} at ${dayjs().format('LLL')}`);
 });
 
-app.listen(process.env.PORT, () => console.log(`Server running on port ${process.env.PORT}`));
+app.listen(process.env.PORT, onStart);
