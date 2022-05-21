@@ -1,12 +1,14 @@
-const express = require('express');
+const { Router } = require('express');
 
-const router = express.Router();
+const router = Router();
 const axios = require('axios');
 const dayjs = require('./dayjs');
 
 const { db, auth } = require('./firebase');
 
 const generateRandomString = require('./helpers/generateRandomString');
+const getUserFromToken = require('./helpers/getUserFromToken');
+const getCollection = require('./helpers/getCollection');
 const confirmEmail = require('./helpers/confirmEmail');
 const sendMail = require('./helpers/sendMail');
 
@@ -90,7 +92,7 @@ router.post('/activateAccount', async (req, res) => {
 router.get('/getSchedules/:employeeId', async (req, res) => {
   const schedules = {};
 
-  const getData = async (doc) => {
+  const fetchData = async (doc) => {
     if (process.env.NODE_ENV === 'development') {
       const { data } = await axios.get(process.env.DATA + doc);
       // eslint-disable-next-line no-shadow
@@ -111,7 +113,7 @@ router.get('/getSchedules/:employeeId', async (req, res) => {
     return query.get();
   };
 
-  const snapshot = await getData('shifts');
+  const snapshot = await fetchData('shifts');
 
   snapshot.forEach((doc) => {
     const data = doc.data();
@@ -182,6 +184,30 @@ router.get('/accept/:shiftId', async (req, res) => {
   } catch (err) {
     res.status(401).end();
   }
+});
+
+router.get('/db/shifts', async (req, res) => {
+  const user = await getUserFromToken(req.headers.authorization);
+
+  if (!user) {
+    res.status(401).end();
+    return;
+  }
+
+  const shifts = await getCollection('shifts');
+
+  if (user.status === 'admin') {
+    res.json(shifts).end();
+    return;
+  }
+
+  const dataByEmployee = shifts.filter((shift) => shift.employeeId === user.id);
+  res.json(dataByEmployee).end();
+});
+
+router.delete('/db/:collection/:doc', async (req, res) => {
+  await db.collection(req.params.collection).doc(req.params.doc).delete();
+  res.end();
 });
 
 module.exports = router;
