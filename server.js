@@ -10,6 +10,9 @@ app.use(express.json());
 
 const { db } = require('./firebase');
 const dayjs = require('./dayjs');
+const redis = require('./redis');
+
+redis.connect();
 
 const parse = require('./helpers/parse');
 const shiftDatabase = require('./helpers/shiftDatabase');
