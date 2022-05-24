@@ -233,6 +233,18 @@ router.get('/db/settings', async (req, res) => {
 });
 
 router.delete('/db/:collection/:doc', async (req, res) => {
+  const user = await getUserFromToken(req.headers.authorization);
+
+  if (!user) {
+    res.status(401).end();
+    return;
+  }
+
+  if (user.status !== 'admin') {
+    res.status(403).end();
+    return;
+  }
+
   await db.collection(req.params.collection).doc(req.params.doc).delete();
   res.end();
 });
