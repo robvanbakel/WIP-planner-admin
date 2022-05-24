@@ -205,6 +205,25 @@ router.get('/db/shifts', async (req, res) => {
   res.json(dataByEmployee).end();
 });
 
+router.get('/db/users', async (req, res) => {
+  const user = await getUserFromToken(req.headers.authorization);
+
+  if (!user) {
+    res.status(401).end();
+    return;
+  }
+
+  const users = await getCollection('users');
+
+  if (user.status === 'admin') {
+    res.json(users).end();
+    return;
+  }
+
+  const dataByEmployee = users.find((v) => v.id === user.id);
+  res.json(dataByEmployee).end();
+});
+
 router.delete('/db/:collection/:doc', async (req, res) => {
   await db.collection(req.params.collection).doc(req.params.doc).delete();
   res.end();
