@@ -224,6 +224,19 @@ router.get('/db/users', async (req, res) => {
   res.json(dataByEmployee).end();
 });
 
+router.get('/db/settings', async (req, res) => {
+  const user = await getUserFromToken(req.headers.authorization);
+
+  if (!user) {
+    res.status(401).end();
+    return;
+  }
+
+  const users = await getCollection('settings');
+
+  res.json(users).end();
+});
+
 router.delete('/db/:collection/:doc', async (req, res) => {
   await db.collection(req.params.collection).doc(req.params.doc).delete();
   res.end();
