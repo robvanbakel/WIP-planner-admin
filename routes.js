@@ -164,18 +164,13 @@ router.get('/getUser/:id', async (req, res) => {
 
 router.get('/accept/:shiftId', async (req, res) => {
   try {
-    // Get ID Token from request headers
-    const idToken = req.headers.authorization;
-    const user = await auth.verifyIdToken(idToken);
+    const user = await getUserFromToken(req.headers.authorization);
 
-    // Find corresponding shift
-    const shiftRef = db.collection('shifts').doc(req.params.shiftId);
-    const response = await shiftRef.get();
-    const data = response.data();
+    const shifts = await getCollection('shifts');
+    const foundShift = shifts.find((shift) => shift.id === req.params.shiftId);
 
-    // Update status if request was sent by correct employee
-    if (data.employeeId === user.uid) {
-      shiftRef.update({
+    if (foundShift.employeeId === user.id) {
+      db.collection('shifts').doc(req.params.shiftId).update({
         status: 'ACCEPTED',
       });
     }
