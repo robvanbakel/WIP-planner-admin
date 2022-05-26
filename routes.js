@@ -267,4 +267,25 @@ router.patch('/db/shifts/:shiftId', async (req, res) => {
   res.end();
 });
 
+router.post('/db/shifts/:shiftId', async (req, res) => {
+  const user = await getUserFromToken(req.headers.authorization);
+
+  if (!user) {
+    res.status(401).end();
+    return;
+  }
+
+  if (user.status !== 'admin') {
+    res.status(403).end();
+    return;
+  }
+
+  await db.collection('shifts').doc(req.params.shiftId).set({
+    ...req.body,
+    status: 'PROPOSED',
+  });
+
+  res.end();
+});
+
 module.exports = router;
