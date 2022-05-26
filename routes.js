@@ -249,4 +249,26 @@ router.delete('/db/:collection/:doc', async (req, res) => {
   res.end();
 });
 
+router.patch('/db/shifts/:shiftId', async (req, res) => {
+  try {
+    const user = await getUserFromToken(req.headers.authorization);
+
+    if (!user) {
+      res.status(401).end();
+      return;
+    }
+
+    if (user.status !== 'admin') {
+      res.status(403).end();
+      return;
+    }
+
+    await db.collection('shifts').doc(req.params.shiftId).update(req.body);
+
+    res.end();
+  } catch {
+    res.status(500).end();
+  }
+});
+
 module.exports = router;
