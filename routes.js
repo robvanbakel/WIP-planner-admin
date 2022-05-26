@@ -250,25 +250,21 @@ router.delete('/db/:collection/:doc', async (req, res) => {
 });
 
 router.patch('/db/shifts/:shiftId', async (req, res) => {
-  try {
-    const user = await getUserFromToken(req.headers.authorization);
+  const user = await getUserFromToken(req.headers.authorization);
 
-    if (!user) {
-      res.status(401).end();
-      return;
-    }
-
-    if (user.status !== 'admin') {
-      res.status(403).end();
-      return;
-    }
-
-    await db.collection('shifts').doc(req.params.shiftId).update(req.body);
-
-    res.end();
-  } catch {
-    res.status(500).end();
+  if (!user) {
+    res.status(401).end();
+    return;
   }
+
+  if (user.status !== 'admin') {
+    res.status(403).end();
+    return;
+  }
+
+  await db.collection('shifts').doc(req.params.shiftId).update(req.body);
+
+  res.end();
 });
 
 module.exports = router;
