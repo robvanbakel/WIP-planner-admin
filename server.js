@@ -8,8 +8,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const { db } = require('./firebase');
-const dayjs = require('./dayjs');
 const redis = require('./redis');
 
 redis.connect();
@@ -17,22 +15,7 @@ redis.connect();
 const parse = require('./helpers/parse');
 const shiftDatabase = require('./helpers/shiftDatabase');
 const onStart = require('./helpers/onStart');
-
-// Empty variable to store settings
-let shareWithEmployees;
-let location;
-
-// Helper function to get settings from database
-const getSettings = async () => {
-  const getShareWithEmployees = await db.collection('settings').doc('shareWithEmployees').get();
-  shareWithEmployees = getShareWithEmployees.data();
-
-  const getLocation = await db.collection('settings').doc('location').get();
-  location = getLocation.data();
-};
-
-// Get initial settings when starting server
-getSettings();
+const getCollection = require('./helpers/getCollection');
 
 // Every monday at midnight, move database
 // with demo content to current week
@@ -41,27 +24,21 @@ cron.schedule('0 0 * * 1', () => shiftDatabase());
 // Routes
 app.use('/admin', require('./routes'));
 
-app.get('/feed/:id', async (req, res) => {
-  const uid = req.params.id;
+app.get('/feed/:token', async (req, res) => {
+  const users = await getCollection('users');
+  const foundUser = users.find((user) => user.feedToken === req.params.token);
 
-  const schedules = {};
+  if (!foundUser) {
+    res.status(404).end();
+    return;
+  }
 
-  const snapshot = await db.collection('schedules').get();
-  snapshot.forEach((doc) => {
-    const week = doc.data();
+  const shifts = await getCollection('shifts');
+  const userShifts = shifts.filter((shift) => shift.employeeId === foundUser.id && shift.status !== 'PROPOSED');
 
-    if (week[uid]) {
-      schedules[doc.id] = week[uid];
-    }
-  });
+  const icsContent = await parse(userShifts);
 
-  const icsContent = parse(schedules, { shareNotes: shareWithEmployees.shiftNotes, location });
-
-  res.set('Content-Type', 'text/calendar');
-
-  res.send(icsContent);
-
-  console.log(`Served feed to ${'uid'} at ${dayjs().format('LLL')}`);
+  res.header('Content-Type', 'text/calendar').end(icsContent);
 });
 
 app.listen(process.env.PORT, onStart);
