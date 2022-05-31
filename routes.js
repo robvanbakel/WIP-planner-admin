@@ -162,23 +162,24 @@ router.get('/getUser/:id', async (req, res) => {
   res.send(user);
 });
 
-router.get('/accept/:shiftId', async (req, res) => {
-  try {
-    const user = await getUserFromToken(req.headers.authorization);
+router.patch('/accept/:shiftId', async (req, res) => {
+  const user = await getUserFromToken(req.headers.authorization);
 
-    const shifts = await getCollection('shifts');
-    const foundShift = shifts.find((shift) => shift.id === req.params.shiftId);
-
-    if (foundShift.employeeId === user.id) {
-      db.collection('shifts').doc(req.params.shiftId).update({
-        status: 'ACCEPTED',
-      });
-    }
-
-    res.end();
-  } catch (err) {
+  if (!user) {
     res.status(401).end();
+    return;
   }
+
+  const shifts = await getCollection('shifts');
+  const foundShift = shifts.find((shift) => shift.id === req.params.shiftId);
+
+  if (foundShift.employeeId !== user.id) {
+    res.status(403).end();
+    return;
+  }
+
+  await db.collection('shifts').doc(req.params.shiftId).update({ status: 'ACCEPTED' });
+  res.end();
 });
 
 router.get('/db/shifts', async (req, res) => {
