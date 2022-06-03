@@ -250,7 +250,7 @@ router.delete('/db/:collection/:doc', async (req, res) => {
   res.end();
 });
 
-router.patch('/db/shifts/:shiftId', async (req, res) => {
+router.patch('/db/:collection/:doc', async (req, res) => {
   const user = await getUserFromToken(req.headers.authorization);
 
   if (!user) {
@@ -263,12 +263,12 @@ router.patch('/db/shifts/:shiftId', async (req, res) => {
     return;
   }
 
-  await db.collection('shifts').doc(req.params.shiftId).update(req.body);
+  await db.collection(req.params.collection).doc(req.params.doc).update(req.body);
 
   res.end();
 });
 
-router.post('/db/shifts/:shiftId', async (req, res) => {
+router.post('/db/:collection/:doc', async (req, res) => {
   const user = await getUserFromToken(req.headers.authorization);
 
   if (!user) {
@@ -281,10 +281,7 @@ router.post('/db/shifts/:shiftId', async (req, res) => {
     return;
   }
 
-  await db.collection('shifts').doc(req.params.shiftId).set({
-    ...req.body,
-    status: 'PROPOSED',
-  });
+  await db.collection(req.params.collection).doc(req.params.doc).set(req.body);
 
   res.end();
 });
