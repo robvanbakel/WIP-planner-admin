@@ -192,7 +192,7 @@ router.get('/db/shifts', async (req, res) => {
 
   const shifts = await getCollection('shifts');
 
-  if (user.status === 'admin') {
+  if (user.status === 'ADMIN') {
     res.json(shifts).end();
     return;
   }
@@ -211,7 +211,7 @@ router.get('/db/users', async (req, res) => {
 
   const users = await getCollection('users');
 
-  if (user.status === 'admin') {
+  if (user.status === 'ADMIN') {
     res.json(users).end();
     return;
   }
@@ -241,7 +241,7 @@ router.delete('/db/:collection/:doc', async (req, res) => {
     return;
   }
 
-  if (user.status !== 'admin') {
+  if (user.status !== 'ADMIN') {
     res.status(403).end();
     return;
   }
@@ -258,7 +258,7 @@ router.patch('/db/:collection/:doc', async (req, res) => {
     return;
   }
 
-  if (user.status !== 'admin') {
+  if (user.status !== 'ADMIN') {
     res.status(403).end();
     return;
   }
@@ -276,7 +276,7 @@ router.post('/db/:collection/:doc', async (req, res) => {
     return;
   }
 
-  if (user.status !== 'admin') {
+  if (user.status !== 'ADMIN') {
     res.status(403).end();
     return;
   }
