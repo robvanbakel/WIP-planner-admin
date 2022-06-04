@@ -28,6 +28,8 @@ router.post('/db/users/:uid', async (req, res) => {
     await db.collection('users').doc(req.params.uid).set({
       ...req.body,
       status: 'STAGED',
+      feedToken: generateRandomString(36),
+      createdAt: Date.now(),
     });
 
     // Send mail with activation token to provided email address
