@@ -23,6 +23,7 @@ cron.schedule('0 0 * * 1', () => shiftDatabase());
 
 // Routes
 app.use('/admin', require('./routes'));
+app.use('/admin', require('./routes/admin'));
 
 app.get('/feed/:token', async (req, res) => {
   const users = await getCollection('users');
