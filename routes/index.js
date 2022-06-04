@@ -58,7 +58,10 @@ router.patch('/accept/:shiftId', async (req, res) => {
     return;
   }
 
-  await db.collection('shifts').doc(req.params.shiftId).update({ status: 'ACCEPTED' });
+  await db.collection('shifts').doc(req.params.shiftId).update({
+    status: 'ACCEPTED',
+    statusUpdated: new Date().toISOString(),
+  });
 
   res.end();
 });
