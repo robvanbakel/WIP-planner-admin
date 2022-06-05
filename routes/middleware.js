@@ -1,7 +1,7 @@
 const getCollection = require('../helpers/getCollection');
 const getUserFromToken = require('../helpers/getUserFromToken');
-const shiftDeleted = require('../helpers/mailTemplates/shiftDeleted');
-const sendMail = require('../helpers/sendMail');
+const shiftDeleted = require('../helpers/mail/templates/shiftDeleted');
+const sendMail = require('../helpers/mail/sendMail');
 
 const adminOnly = async (req, res, next) => {
   const user = await getUserFromToken(req.headers.authorization);

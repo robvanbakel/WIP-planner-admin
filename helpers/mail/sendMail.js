@@ -1,10 +1,10 @@
 require('dotenv').config();
 const sgMail = require('@sendgrid/mail');
-const getCollection = require('./getCollection');
+const getCollection = require('../getCollection');
 
 sgMail.setApiKey(process.env.SENDGRID_KEY);
 
-const general = require('./mailTemplates/general');
+const general = require('./base');
 
 const sendMail = async (to, subject, html) => {
   let receiver = to;

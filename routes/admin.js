@@ -1,11 +1,11 @@
 const { Router } = require('express');
 const { adminOnly, notify } = require('./middleware');
 
-const sendMail = require('../helpers/sendMail');
+const sendMail = require('../helpers/mail/sendMail');
 const generateRandomString = require('../helpers/generateRandomString');
 
-const activateAccount = require('../helpers/mailTemplates/activateAccount');
-const acceptShift = require('../helpers/mailTemplates/acceptShift');
+const activateAccount = require('../helpers/mail/templates/activateAccount');
+const acceptShift = require('../helpers/mail/templates/acceptShift');
 
 const { db, auth } = require('../firebase');
 const getCollection = require('../helpers/getCollection');
