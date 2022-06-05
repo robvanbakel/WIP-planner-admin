@@ -6,7 +6,7 @@ const acceptShift = () => `<p>
       display: block;
       width: min-content;
       white-space: nowrap;
-      margin: 24px 0 0;
+      margin: 24px 0;
       padding: 10px 18px;
       text-decoration: none;
       font-weight: 600;
