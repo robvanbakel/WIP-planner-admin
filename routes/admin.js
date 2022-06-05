@@ -4,6 +4,8 @@ const { adminOnly } = require('./guards');
 const sendMail = require('../helpers/sendMail');
 const generateRandomString = require('../helpers/generateRandomString');
 
+const activateAccount = require('../helpers/mailTemplates/activateAccount');
+
 const { db, auth } = require('../firebase');
 
 const router = Router();
@@ -33,7 +35,7 @@ router.post('/db/users/:uid', async (req, res) => {
     });
 
     // Send mail with activation token to provided email address
-    sendMail({ activationToken, email: req.body.email, firstName: req.body.firstName });
+    sendMail(req.body.email, 'Activate your account', activateAccount({ activationToken, firstName: req.body.firstName }));
 
     res.end();
   } catch (err) {
