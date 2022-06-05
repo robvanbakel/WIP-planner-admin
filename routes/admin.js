@@ -5,10 +5,8 @@ const sendMail = require('../helpers/mail/sendMail');
 const generateRandomString = require('../helpers/generateRandomString');
 
 const activateAccount = require('../helpers/mail/templates/activateAccount');
-const acceptShift = require('../helpers/mail/templates/acceptShift');
 
 const { db, auth } = require('../firebase');
-const getCollection = require('../helpers/getCollection');
 
 const router = Router();
 
@@ -46,15 +44,6 @@ router.post('/db/users/:uid', async (req, res) => {
     }
     res.status(400).end();
   }
-});
-
-router.get('/notify/acceptShift/:shiftId', async (req, res) => {
-  const shifts = await getCollection('shifts');
-  const foundShift = shifts.find((shift) => shift.id === req.params.shiftId);
-
-  sendMail(foundShift.employeeId, 'Requesting your acceptance', acceptShift());
-
-  res.end();
 });
 
 router.delete('/db/:collection/:doc', notify, async (req, res) => {

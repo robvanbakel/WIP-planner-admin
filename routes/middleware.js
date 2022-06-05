@@ -1,3 +1,7 @@
+const fs = require('fs');
+const path = require('path');
+const dayjs = require('../dayjs');
+
 const getCollection = require('../helpers/getCollection');
 const getUserFromToken = require('../helpers/getUserFromToken');
 const shiftDeleted = require('../helpers/mail/templates/shiftDeleted');
@@ -38,4 +42,14 @@ const notify = async (req, res, next) => {
   next();
 };
 
-module.exports = { adminOnly, notify };
+const logger = (req, res, next) => {
+  const rootDir = path.dirname(require.main.filename);
+
+  fs.appendFile(
+    path.join(rootDir, 'logs', `${dayjs().format('YYYY-MM-DD')}.log`),
+    `${dayjs().format('YYYY-MM-DD HH:mm:ss Z')}\n${req.method} ${req.originalUrl}\n${['POST', 'PATCH'].includes(req.method) ? `${JSON.stringify(req.body)}\n` : ''}\n`,
+    next,
+  );
+};
+
+module.exports = { adminOnly, notify, logger };
