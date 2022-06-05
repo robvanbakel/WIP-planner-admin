@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { adminOnly } = require('./guards');
+const { adminOnly, notify } = require('./middleware');
 
 const sendMail = require('../helpers/sendMail');
 const generateRandomString = require('../helpers/generateRandomString');
@@ -57,17 +57,17 @@ router.get('/notify/acceptShift/:shiftId', async (req, res) => {
   res.end();
 });
 
-router.delete('/db/:collection/:doc', async (req, res) => {
+router.delete('/db/:collection/:doc', notify, async (req, res) => {
   await db.collection(req.params.collection).doc(req.params.doc).delete();
   res.end();
 });
 
-router.patch('/db/:collection/:doc', async (req, res) => {
+router.patch('/db/:collection/:doc', notify, async (req, res) => {
   await db.collection(req.params.collection).doc(req.params.doc).update(req.body);
   res.end();
 });
 
-router.post('/db/:collection/:doc', async (req, res) => {
+router.post('/db/:collection/:doc', notify, async (req, res) => {
   await db.collection(req.params.collection).doc(req.params.doc).set(req.body);
   res.end();
 });
