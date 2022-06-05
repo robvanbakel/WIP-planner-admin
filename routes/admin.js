@@ -5,8 +5,10 @@ const sendMail = require('../helpers/sendMail');
 const generateRandomString = require('../helpers/generateRandomString');
 
 const activateAccount = require('../helpers/mailTemplates/activateAccount');
+const acceptShift = require('../helpers/mailTemplates/acceptShift');
 
 const { db, auth } = require('../firebase');
+const getCollection = require('../helpers/getCollection');
 
 const router = Router();
 
@@ -35,7 +37,7 @@ router.post('/db/users/:uid', async (req, res) => {
     });
 
     // Send mail with activation token to provided email address
-    sendMail(req.body.email, 'Activate your account', activateAccount({ activationToken, firstName: req.body.firstName }));
+    sendMail({ email: req.body.email, fristName: req.body.firstName }, 'Activate your account', activateAccount({ activationToken }));
 
     res.end();
   } catch (err) {
@@ -44,6 +46,15 @@ router.post('/db/users/:uid', async (req, res) => {
     }
     res.status(400).end();
   }
+});
+
+router.get('/notify/acceptShift/:shiftId', async (req, res) => {
+  const shifts = await getCollection('shifts');
+  const foundShift = shifts.find((shift) => shift.id === req.params.shiftId);
+
+  sendMail(foundShift.employeeId, 'Requesting your acceptance', acceptShift());
+
+  res.end();
 });
 
 router.delete('/db/:collection/:doc', async (req, res) => {

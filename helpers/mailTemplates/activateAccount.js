@@ -1,8 +1,7 @@
-const activateAccount = ({ activationToken, firstName }) => {
+const activateAccount = ({ activationToken }) => {
   const activationLink = `https://app.sparkscheduler.com/auth?activationToken=${activationToken}`;
 
-  return `<p>Hi ${firstName},</p>
-  <p>
+  return `<p>
     Welcome to our team! A new account has been made for you, click the
     button below to create a password and activate your account.
   </p>
@@ -34,10 +33,6 @@ const activateAccount = ({ activationToken, firstName }) => {
   <p>
     After activating your account, you'll be able to log in and see your
     schedule.
-  </p>
-  <p>
-    Kind regards,<br />
-    The Planning team
   </p>`;
 };
 

@@ -1,4 +1,4 @@
-const general = (html) => `<div
+const general = ({ firstName, body, sender = 'The Planning team' }) => `<div
 style="
   font-family: Roboto, sans-serif;
   color: #635d6d;
@@ -13,7 +13,14 @@ style="
     border: 1px solid #deddde;
     border-radius: 20px;
   ">
-    ${html}
+    <p>
+      Hi ${firstName},
+    </p>
+    ${body}
+    <p>
+      Kind regards,<br />
+      ${sender}
+    </p>
   </div>
 </div>`;
 
