@@ -2,10 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const dayjs = require('../dayjs');
 
-const getCollection = require('../helpers/getCollection');
 const getUserFromToken = require('../helpers/getUserFromToken');
-const shiftDeleted = require('../helpers/mail/templates/shiftDeleted');
-const sendMail = require('../helpers/mail/sendMail');
 
 const adminOnly = async (req, res, next) => {
   const user = await getUserFromToken(req.headers.authorization);
@@ -23,27 +20,13 @@ const adminOnly = async (req, res, next) => {
   next();
 };
 
-const notify = async (req, res, next) => {
-  if (req.params.collection === 'shifts') {
-    if (req.method === 'DELETE') {
-      const shifts = await getCollection('shifts');
-      const foundShift = shifts.find((shift) => shift.id === req.params.doc);
-
-      sendMail(foundShift.employeeId, 'Your shift has been cancelled', await shiftDeleted({ shiftId: foundShift.id }));
-    }
-  }
-
-  console.log({
-    method: req.method,
-    params: req.params,
-    body: req.body,
-  });
-
-  next();
-};
-
 const logger = (req, res, next) => {
   const rootDir = path.dirname(require.main.filename);
+
+  if (req.method === 'GET' && ['/admin/db/settings', '/admin/db/users', '/admin/db/shifts'].includes(req.originalUrl)) {
+    next();
+    return;
+  }
 
   fs.appendFile(
     path.join(rootDir, 'logs', `${dayjs().format('YYYY-MM-DD')}.log`),
@@ -52,4 +35,4 @@ const logger = (req, res, next) => {
   );
 };
 
-module.exports = { adminOnly, notify, logger };
+module.exports = { adminOnly, logger };
