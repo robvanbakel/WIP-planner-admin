@@ -77,7 +77,10 @@ router.patch('/db/shifts/:doc', async (req, res) => {
     }
 
     await db.collection('shifts').doc(req.params.doc).update({ ...req.body, status: 'PROPOSED' });
-    await sendMail(req.body.employeeId, 'Your schedule has been updated', scheduleUpdated({ week: dayjs(req.body.from).format('W') }));
+
+    if (oldState.status === 'ACCEPTED') {
+      await sendMail(req.body.employeeId, 'Your schedule has been updated', scheduleUpdated({ week: dayjs(req.body.from).format('W') }));
+    }
 
     res.end();
     return;
