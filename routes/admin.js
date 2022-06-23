@@ -130,4 +130,9 @@ router.post('/db/:collection/:doc', async (req, res) => {
   res.end();
 });
 
+router.get('/db/settings', async (req, res) => {
+  const settings = await getCollection('settings');
+  res.json(settings).end();
+});
+
 module.exports = router;
