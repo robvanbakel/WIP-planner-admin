@@ -115,6 +115,13 @@ router.delete('/db/shifts/:doc', async (req, res) => {
   res.end();
 });
 
+router.get('/db/settings', async (req, res) => {
+  const admin = await getCollection('admin');
+  const settings = admin.find((i) => i.id === 'settings');
+
+  res.json(settings).end();
+});
+
 router.delete('/db/:collection/:doc', async (req, res) => {
   await db.collection(req.params.collection).doc(req.params.doc).delete();
   res.end();
@@ -128,11 +135,6 @@ router.patch('/db/:collection/:doc', async (req, res) => {
 router.post('/db/:collection/:doc', async (req, res) => {
   await db.collection(req.params.collection).doc(req.params.doc).set(req.body);
   res.end();
-});
-
-router.get('/db/settings', async (req, res) => {
-  const settings = await getCollection('settings');
-  res.json(settings).end();
 });
 
 module.exports = router;

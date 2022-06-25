@@ -3,7 +3,8 @@ const dayjs = require('../dayjs');
 const getCollection = require('./getCollection');
 
 const parse = async (shifts) => {
-  const settings = await getCollection('settings');
+  const admin = await getCollection('admin');
+  const settings = admin.find((i) => i.id === 'settings');
   const { shiftNotes } = settings.find((setting) => setting.id === 'shareWithEmployees');
   const { address, postalCode, city } = settings.find((setting) => setting.id === 'location');
 

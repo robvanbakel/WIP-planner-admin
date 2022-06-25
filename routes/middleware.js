@@ -23,7 +23,7 @@ const adminOnly = async (req, res, next) => {
 const logger = (req, res, next) => {
   const rootDir = path.dirname(require.main.filename);
 
-  if (req.method === 'GET' && ['/admin/db/settings', '/admin/db/users', '/admin/db/shifts'].includes(req.originalUrl)) {
+  if (req.method === 'GET' && ['/admin/db/admin', '/admin/db/users', '/admin/db/shifts'].includes(req.originalUrl)) {
     next();
     return;
   }
