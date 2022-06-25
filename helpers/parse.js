@@ -5,8 +5,9 @@ const getCollection = require('./getCollection');
 const parse = async (shifts) => {
   const admin = await getCollection('admin');
   const settings = admin.find((i) => i.id === 'settings');
-  const { shiftNotes } = settings.find((setting) => setting.id === 'shareWithEmployees');
-  const { address, postalCode, city } = settings.find((setting) => setting.id === 'location');
+
+  const { shiftNotes } = settings.shareWithEmployees;
+  const { street, postalCode, city } = settings.address;
 
   let icsContent = 'BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Rob van Bakel//Spark//EN';
 
@@ -18,7 +19,7 @@ const parse = async (shifts) => {
     + `\nDTEND:${dayjs(shift.to).format('YYYYMMDDTHHmmss')}`
     + `\nSUMMARY:${shift.location}`
     + `\nDESCRIPTION:${shiftNotes ? shift.notes : ''}`
-    + `\nLOCATION:${address}\\n${postalCode} ${city}`
+    + `\nLOCATION:${street}\\n${postalCode} ${city}`
     + '\nEND:VEVENT';
   });
 
