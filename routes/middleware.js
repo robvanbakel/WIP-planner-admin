@@ -4,6 +4,22 @@ const dayjs = require('../dayjs');
 
 const getUserFromToken = require('../helpers/getUserFromToken');
 
+const demoGuard = async (req, res, next) => {
+  if (req.method === 'GET') {
+    next();
+    return;
+  }
+
+  const user = await getUserFromToken(req.headers.authorization);
+
+  if (user.demo) {
+    res.send('No data will be saved in the demo environment');
+    return;
+  }
+
+  next();
+};
+
 const adminOnly = async (req, res, next) => {
   const user = await getUserFromToken(req.headers.authorization);
 
@@ -35,4 +51,4 @@ const logger = (req, res, next) => {
   );
 };
 
-module.exports = { adminOnly, logger };
+module.exports = { adminOnly, logger, demoGuard };

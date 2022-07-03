@@ -16,13 +16,14 @@ const parse = require('./helpers/parse');
 const shiftDatabase = require('./helpers/shiftDatabase');
 const onStart = require('./helpers/onStart');
 const getCollection = require('./helpers/getCollection');
-const { logger } = require('./routes/middleware');
+const { logger, demoGuard } = require('./routes/middleware');
 
 // Every monday at midnight, move database
 // with demo content to current week
 cron.schedule('0 0 * * 1', () => shiftDatabase());
 
 app.use(logger);
+app.use(demoGuard);
 
 // Routes
 app.use('/admin', require('./routes'));
