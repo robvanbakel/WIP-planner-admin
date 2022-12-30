@@ -2,10 +2,13 @@
   "name": "spark-admin",
   "version": "1.0.0",
   "description": "Admin environment for higher-level functions for Spark",
-  "main": "server.js",
+  "main": "dist",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "tsc -w & nodemon dist",
+    "build": "tsc -p .",
+    "prestart": "yarn build",
+    "start": "node dist",
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
