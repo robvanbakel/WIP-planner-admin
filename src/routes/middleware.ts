@@ -1,18 +1,19 @@
-const fs = require('fs');
-const path = require('path');
-const dayjs = require('../dayjs');
+import fs from 'fs';
+import path from 'path';
+import { RequestHandler } from 'express';
+import dayjs from '../dayjs';
 
-const getUserFromToken = require('../helpers/getUserFromToken');
+import getUserFromToken from '../helpers/getUserFromToken';
 
-const demoGuard = async (req, res, next) => {
+export const demoGuard: RequestHandler = async (req, res, next) => {
   if (req.method === 'GET') {
     next();
     return;
   }
 
-  const user = await getUserFromToken(req.headers.authorization);
+  const user = await getUserFromToken(req.headers.authorization as string);
 
-  if (user.demo) {
+  if (user?.demo) {
     res.send('No data will be saved in the demo environment');
     return;
   }
@@ -20,8 +21,8 @@ const demoGuard = async (req, res, next) => {
   next();
 };
 
-const adminOnly = async (req, res, next) => {
-  const user = await getUserFromToken(req.headers.authorization);
+export const adminOnly: RequestHandler = async (req, res, next) => {
+  const user = await getUserFromToken(req.headers.authorization as string);
 
   if (!user) {
     res.status(401).end();
@@ -36,19 +37,15 @@ const adminOnly = async (req, res, next) => {
   next();
 };
 
-const logger = (req, res, next) => {
-  const rootDir = path.dirname(require.main.filename);
-
+export const logger: RequestHandler = (req, res, next) => {
   if (req.method === 'GET' && ['/admin/db/settings', '/admin/db/users', '/admin/db/shifts'].includes(req.originalUrl)) {
     next();
     return;
   }
 
   fs.appendFile(
-    path.join(rootDir, 'logs', `${dayjs().format('YYYY-MM-DD')}.log`),
+    path.join(process.env.LOGS_DIRECTORY as string, `${dayjs().format('YYYY-MM-DD')}.log`),
     `${dayjs().format('YYYY-MM-DD HH:mm:ss Z')}\n${req.method} ${req.originalUrl}\n${['POST', 'PATCH'].includes(req.method) ? `${JSON.stringify(req.body)}\n` : ''}\n`,
     next,
   );
 };
-
-module.exports = { adminOnly, logger, demoGuard };
