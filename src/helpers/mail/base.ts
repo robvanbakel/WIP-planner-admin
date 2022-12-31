@@ -1,4 +1,4 @@
-const general = ({ firstName, body, sender = 'The Planning team' }) => `<div
+export default ({ firstName, body, sender = 'The Planning team' }: { firstName: string, body: string, sender?: string }) => `<div
 style="
   font-family: Roboto, sans-serif;
   color: #635d6d;
@@ -23,5 +23,3 @@ style="
     </p>
   </div>
 </div>`;
-
-module.exports = general;

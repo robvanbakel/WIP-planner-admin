@@ -1,4 +1,8 @@
-const button = ({ link = 'https://app.sparkscheduler.com', text = 'Go to Spark', options = {} } = {}) => {
+interface Options {
+  showCopyPasteLink: boolean
+}
+
+export default ({ link = 'https://app.sparkscheduler.com', text = 'Go to Spark', options = {} as Partial<Options> } = {}) => {
   let html = `<a
   style="
     display: block;
@@ -31,5 +35,3 @@ const button = ({ link = 'https://app.sparkscheduler.com', text = 'Go to Spark',
 
   return html;
 };
-
-module.exports = button;

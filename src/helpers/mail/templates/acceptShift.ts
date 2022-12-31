@@ -1,4 +1,4 @@
-const acceptShift = () => `<p>
+export default () => `<p>
     Your acceptance for a shift has been requested. Please visit Spark to review and accept your shift.
   </p>
   <a
@@ -21,5 +21,3 @@ const acceptShift = () => `<p>
   <p>
     
   </p>`;
-
-module.exports = acceptShift;

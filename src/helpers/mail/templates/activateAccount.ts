@@ -1,4 +1,4 @@
-const activateAccount = ({ activationToken }) => {
+export default ({ activationToken }: { activationToken: string }) => {
   const activationLink = `https://app.sparkscheduler.com/auth?activationToken=${activationToken}`;
 
   return `<p>
@@ -35,5 +35,3 @@ const activateAccount = ({ activationToken }) => {
     schedule.
   </p>`;
 };
-
-module.exports = activateAccount;
