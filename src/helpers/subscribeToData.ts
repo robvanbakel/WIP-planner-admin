@@ -1,11 +1,11 @@
-const redis = require('../redis');
-const { db } = require('../firebase');
+import redis from '../redis';
+import { db } from '../firebase';
 
-const subscribeToData = (collection) => new Promise((resolve) => {
+export default <T>(collection: string): Promise<T[]> => new Promise((resolve) => {
   db.collection(collection).onSnapshot((snapshot) => {
     const data = snapshot.docs.map((doc) => ({
       id: doc.id,
-      ...doc.data(),
+      ...doc.data() as T,
     }));
 
     redis.set(collection, JSON.stringify(data));
@@ -13,5 +13,3 @@ const subscribeToData = (collection) => new Promise((resolve) => {
     resolve(data);
   });
 });
-
-module.exports = subscribeToData;

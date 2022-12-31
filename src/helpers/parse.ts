@@ -1,10 +1,13 @@
-const { v4: uuidv4 } = require('uuid');
-const dayjs = require('../dayjs');
-const getCollection = require('./getCollection');
+import { v4 as uuidv4 } from 'uuid';
+import dayjs from '../dayjs';
+import getCollection from './getCollection';
+import { Shift, Admin } from '../types';
 
-const parse = async (shifts) => {
-  const admin = await getCollection('admin');
+export default async (shifts: Shift[]) => {
+  const admin = await getCollection <(Admin & { id: string }) >('admin');
   const settings = admin.find((i) => i.id === 'settings');
+
+  if (!settings) return '';
 
   const { shiftNotes } = settings.shareWithEmployees;
   const { street, postalCode, city } = settings.address;
@@ -27,5 +30,3 @@ const parse = async (shifts) => {
 
   return icsContent;
 };
-
-module.exports = parse;

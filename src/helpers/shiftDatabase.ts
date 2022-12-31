@@ -1,8 +1,10 @@
-require('dotenv').config();
-const { db } = require('../firebase');
-const dayjs = require('../dayjs');
+import dotenv from 'dotenv';
+import { db } from '../firebase';
+import dayjs from '../dayjs';
 
-const shiftDatabase = async () => {
+dotenv.config();
+
+export default async () => {
   const snapshot = await db.collection('shifts').get();
   snapshot.forEach((doc) => {
     const shift = doc.data();
@@ -12,5 +14,3 @@ const shiftDatabase = async () => {
     });
   });
 };
-
-module.exports = shiftDatabase;
