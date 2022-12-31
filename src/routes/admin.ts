@@ -1,16 +1,18 @@
-const { Router } = require('express');
-const { adminOnly } = require('./middleware');
+import { Router } from 'express';
+import { adminOnly } from './middleware';
 
-const sendMail = require('../helpers/mail/sendMail');
-const generateRandomString = require('../helpers/generateRandomString');
+import sendMail from '../helpers/mail/sendMail';
+import generateRandomString from '../helpers/generateRandomString';
 
-const activateAccount = require('../helpers/mail/templates/activateAccount');
-const scheduleUpdated = require('../helpers/mail/templates/scheduleUpdated');
-const shiftCancelled = require('../helpers/mail/templates/shiftCancelled');
+import activateAccount from '../helpers/mail/templates/activateAccount';
+import scheduleUpdated from '../helpers/mail/templates/scheduleUpdated';
+import shiftCancelled from '../helpers/mail/templates/shiftCancelled';
 
-const { db, auth } = require('../firebase');
-const getCollection = require('../helpers/getCollection');
-const dayjs = require('../dayjs');
+import { db, auth } from '../firebase';
+import getCollection from '../helpers/getCollection';
+import dayjs from '../dayjs';
+
+import { Admin, Shift } from '../types';
 
 const router = Router();
 
@@ -39,20 +41,19 @@ router.post('/db/users/:uid', async (req, res) => {
     });
 
     // Send mail with activation token to provided email address
-    sendMail({ email: req.body.email, fristName: req.body.firstName }, 'Activate your account', activateAccount({ activationToken }));
+    sendMail({ email: req.body.email as string, firstName: req.body.firstName as string }, 'Activate your account', activateAccount({ activationToken }));
 
     res.end();
   } catch (err) {
-    if (err.errorInfo.code === 'auth/email-already-exists') {
-      res.status(409).json(err.errorInfo).end();
-    }
     res.status(400).end();
   }
 });
 
 router.patch('/db/shifts/:doc', async (req, res) => {
-  const shifts = await getCollection('shifts');
+  const shifts = await getCollection<Shift>('shifts');
   const oldState = shifts.find((shift) => shift.id === req.params.doc);
+
+  if (!oldState) return;
 
   if (oldState.employeeId !== req.body.employeeId) {
     const collision = shifts.find((shift) => shift.employeeId === req.body.employeeId && dayjs(shift.from).isSame(dayjs(req.body.from), 'date'));
@@ -91,7 +92,7 @@ router.patch('/db/shifts/:doc', async (req, res) => {
 });
 
 router.post('/db/shifts/:doc', async (req, res) => {
-  const shifts = await getCollection('shifts');
+  const shifts = await getCollection<Shift>('shifts');
 
   const collision = shifts.find((shift) => shift.employeeId === req.body.employeeId && dayjs(shift.from).isSame(dayjs(req.body.from), 'date'));
 
@@ -106,8 +107,10 @@ router.post('/db/shifts/:doc', async (req, res) => {
 });
 
 router.delete('/db/shifts/:doc', async (req, res) => {
-  const shifts = await getCollection('shifts');
+  const shifts = await getCollection<Shift>('shifts');
   const oldState = shifts.find((shift) => shift.id === req.params.doc);
+
+  if (!oldState) return;
 
   await db.collection('shifts').doc(req.params.doc).delete();
   await sendMail(oldState.employeeId, 'Your shift has been cancelled', shiftCancelled({ from: oldState.from }));
@@ -116,7 +119,7 @@ router.delete('/db/shifts/:doc', async (req, res) => {
 });
 
 router.get('/db/settings', async (req, res) => {
-  const admin = await getCollection('admin');
+  const admin = await getCollection<Admin>('admin');
   const settings = admin.find((i) => i.id === 'settings');
 
   res.json(settings).end();
@@ -137,4 +140,4 @@ router.post('/db/:collection/:doc', async (req, res) => {
   res.end();
 });
 
-module.exports = router;
+export default router;
