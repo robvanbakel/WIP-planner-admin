@@ -3,5 +3,6 @@ dist/
 
 .env
 *.log
+*.rdb
 
 .DS_Store
