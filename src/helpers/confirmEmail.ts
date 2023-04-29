@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import { db } from '../firebase';
+import dayjs from '../dayjs';
 
 dotenv.config();
 
@@ -14,7 +15,7 @@ export default async (activationToken: string, email: string) => {
     const { uid, iat } = data;
 
     // Check if token is older than 7 days
-    if (Date.now() > iat + 1000 * 60 * 60 * 24 * 7) {
+    if (dayjs().isAfter(dayjs(iat).add(7, 'day'))) {
       return {
         status: 403,
         body: { error: 'Activation token expired' },
