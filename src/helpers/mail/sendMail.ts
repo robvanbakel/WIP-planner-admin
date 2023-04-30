@@ -1,14 +1,12 @@
 import dotenv from 'dotenv';
 
-import sgMail from '@sendgrid/mail';
+import nodemailer from '../../nodemailer';
 import base from './base';
 
 import getCollection from '../getCollection';
 import { User } from '../../types';
 
 dotenv.config();
-
-sgMail.setApiKey(process.env.SENDGRID_KEY as string);
 
 type To = { email: string, firstName: string } | string;
 
@@ -24,11 +22,8 @@ export default async (to: To, subject: string, html: string) => {
     receiver = foundUser;
   }
 
-  sgMail.send({
-    from: {
-      email: 'info@sparkscheduler.com',
-      name: 'Spark',
-    },
+  await nodemailer.sendMail({
+    from: 'Spark <info@sparkscheduler.com>',
     to: receiver.email,
     subject,
     html: base({
