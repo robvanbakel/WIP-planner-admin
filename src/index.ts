@@ -4,8 +4,6 @@ import cors from 'cors';
 import cron from 'node-cron';
 import { User, Shift } from './types';
 
-import redis from './redis';
-
 import shiftDatabase from './helpers/shiftDatabase';
 import parse from './helpers/parse';
 import onStart from './helpers/onStart';
@@ -16,8 +14,6 @@ import routes from './routes';
 import adminRoutes from './routes/admin';
 
 dotenv.config();
-
-redis.connect();
 
 const app = express();
 

@@ -1,4 +1,3 @@
-import redis from '../redis';
 import { db } from '../firebase';
 
 export default <T>(collection: string): Promise<T[]> => new Promise((resolve) => {
@@ -7,8 +6,6 @@ export default <T>(collection: string): Promise<T[]> => new Promise((resolve) =>
       id: doc.id,
       ...doc.data() as T,
     }));
-
-    redis.set(collection, JSON.stringify(data));
 
     resolve(data);
   });
